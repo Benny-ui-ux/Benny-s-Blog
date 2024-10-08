@@ -15,4 +15,4 @@ Vultr as my VPS.
 
 I have an admin page I use to post files to the blog's database. It is password-protected to ensure not just anyone can access the blog-post functionality. I did not include it in the repository for security purposes. 
 
-That being said, it is pretty simple to make your own however, as it is just a basic html form that communicates with the Flask server. 
+That being said, it is pretty simple to make your own, as it is just a basic html form that communicates with the Flask server. 
