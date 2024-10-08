@@ -1,0 +1,40 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+{% for post in posts %}
+    <div class="post card mb-3" 
+         hx-get="/post_content/{{ post['id'] }}" 
+         hx-target="#content-{{ post['id'] }}" 
+         hx-swap="innerHTML" 
+         style="cursor: pointer;" 
+         onclick="toggleContent(event, '{{ post['id'] }}')"> <!-- Added onclick handler -->
+        <div class="card-body">
+            <h3 class="card-title">{{ post['title'] }}</h3>
+            <div id="content-{{ post['id'] }}" class="collapse" style="display: none;">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<script>
+    function toggleContent(event, postId) {
+        const contentDiv = document.getElementById(`content-${postId}`);
+        // Check if content is already loaded
+        if (!contentDiv.innerHTML.trim()) {
+            // Load content if empty
+            htmx.trigger(event.currentTarget, 'htmx:load');
+        }
+        
+        // Toggle visibility
+        if (contentDiv.style.display === "none") {
+            contentDiv.style.display = "block";
+            contentDiv.style.transition = "height 0.3s ease"; // Optional transition
+            contentDiv.style.height = "auto"; // Reset height for smooth transition
+        } else {
+            contentDiv.style.display = "none"; // Hide content
+        }
+    }
+</script>
+
