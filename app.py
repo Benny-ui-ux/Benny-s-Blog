@@ -3,7 +3,7 @@ import sqlite3
 
 app = Flask(__name__)
 
-DATABASE = '/var/www/blog/blog.db'
+DATABASE = 'Enter_Database_Location'
 
 def get_db():
     db = getattr(g, '_database', None)
