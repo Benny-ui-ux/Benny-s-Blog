@@ -1,40 +1,70 @@
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <title>Posts</title>
+</head>
+<body>
 
-{% for post in posts %}
-    <div class="post card mb-3" 
-         hx-get="/post_content/{{ post['id'] }}" 
-         hx-target="#content-{{ post['id'] }}" 
-         hx-swap="innerHTML" 
-         style="cursor: pointer;" 
-         onclick="toggleContent(event, '{{ post['id'] }}')"> <!-- Added onclick handler -->
-        <div class="card-body">
-            <h3 class="card-title">{{ post['title'] }}</h3>
-            <div id="content-{{ post['id'] }}" class="collapse" style="display: none;">
-                <!-- Content will be dynamically inserted here -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <h2>All Posts</h2>
+
+    <!-- Button to submit a new post, visible only when logged in -->
+    {% if session.get('logged_in') %}
+        <div>
+            <a href="{{ url_for('submit_post_page') }}" class="btn btn-primary">Create New Post</a>
+        </div>
+    {% endif %}
+    
+    {% for post in posts %}
+        <div class="post card mb-3" 
+             hx-get="/post_content/{{ post['id'] }}" 
+             hx-target="#content-{{ post['id'] }}" 
+             hx-swap="innerHTML" 
+             style="cursor: pointer;" 
+             onclick="toggleContent(event, '{{ post['id'] }}')">
+            <div class="card-body">
+                <h3 class="card-title">{{ post['title'] }}</h3>
+                
+                <!-- Only show Edit and Delete buttons if user is logged in -->
+                {% if session.get('logged_in') %}
+                    <form action="{{ url_for('edit_post', post_id=post['id']) }}" method="GET" style="display:inline;">
+                        <button type="submit">Edit</button>
+                    </form>
+                    <form action="{{ url_for('delete_post', post_id=post['id']) }}" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this post?');">Delete</button>
+                    </form>
+                {% endif %}
+                
+                <div id="content-{{ post['id'] }}" class="collapse" style="display: none;">
+                    <!-- Content will be dynamically inserted here -->
+                </div>
             </div>
         </div>
-    </div>
-{% endfor %}
+    {% endfor %}
 
-<script>
-    function toggleContent(event, postId) {
-        const contentDiv = document.getElementById(`content-${postId}`);
-        // Check if content is already loaded
-        if (!contentDiv.innerHTML.trim()) {
-            // Load content if empty
-            htmx.trigger(event.currentTarget, 'htmx:load');
+    <script>
+        function toggleContent(event, postId) {
+            const contentDiv = document.getElementById(`content-${postId}`);
+            if (!contentDiv.innerHTML.trim()) {
+                htmx.trigger(event.currentTarget, 'htmx:load');
+            }
+            contentDiv.style.display = contentDiv.style.display === "none" ? "block" : "none";
         }
-        
-        // Toggle visibility
-        if (contentDiv.style.display === "none") {
-            contentDiv.style.display = "block";
-            contentDiv.style.transition = "height 0.3s ease"; // Optional transition
-            contentDiv.style.height = "auto"; // Reset height for smooth transition
-        } else {
-            contentDiv.style.display = "none"; // Hide content
-        }
-    }
-</script>
+    </script>
+</body>
+</html>
 
