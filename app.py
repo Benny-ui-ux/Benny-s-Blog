@@ -16,8 +16,12 @@ app.config['SESSION_COOKIE_PATH'] = '/'
 USERNAME = os.getenv('FLASK_LOGIN_USER')
 PASSWORD = os.getenv('FLASK_LOGIN_PASSWORD')
 
+
 # Set up database
 DATABASE = 'blog.db'
+=======
+DATABASE = '/var/www/blog'
+
 
 # Function to get the database connection
 def get_db():
